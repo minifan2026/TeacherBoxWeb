@@ -5,10 +5,10 @@
     {
       "id": "model3d",
       "name": "3D 课堂演示",
-      "version": "1.0",
+      "version": "1.1",
       "author": "minifan2026",
       "dev": false,
-      "desc": "搭立体、粘合成组、展开成平面图，再设物理量跑模拟",
+      "desc": "搭立体、粘合成组、展开成平面图、按视角生成投影视图，再设物理量跑模拟",
       "file": "tools/model3d.zip"
     },
     {

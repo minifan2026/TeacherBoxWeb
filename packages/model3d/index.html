@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>3D 课堂演示</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <aside id="left">
+    <h1>3D 课堂演示</h1>
+
+    <section>
+      <h2>新建</h2>
+      <div class="grid2">
+        <button class="btn" data-add="box">长方体</button>
+        <button class="btn" data-add="cube">正方体</button>
+        <button class="btn" data-add="sphere">球</button>
+        <button class="btn" data-add="cylinder">圆柱</button>
+        <button class="btn" data-add="cone">圆锥</button>
+        <button class="btn" data-add="prism">三棱柱</button>
+      </div>
+    </section>
+
+    <section id="selPanel" class="hidden">
+      <h2>选中：<span id="selTitle">—</span></h2>
+      <div class="row"><label>位置 X</label><input id="posX" type="range" min="-5" max="5" step="0.05"><span class="val" id="posXv">0</span></div>
+      <div class="row"><label>高度 Y</label><input id="posY" type="range" min="0" max="5" step="0.05"><span class="val" id="posYv">0</span></div>
+      <div class="row"><label>位置 Z</label><input id="posZ" type="range" min="-5" max="5" step="0.05"><span class="val" id="posZv">0</span></div>
+      <div class="row"><label>绕 Y 转</label><input id="rotY" type="range" min="-180" max="180" step="1"><span class="val" id="rotYv">0</span></div>
+      <div class="grid2" style="margin-top:6px">
+        <button class="btn" id="btnRotL">左转 15°</button>
+        <button class="btn" id="btnRotR">右转 15°</button>
+        <button class="btn" id="btnGlue">粘合成组</button>
+        <button class="btn" id="btnUnglue">拆开</button>
+        <button class="btn" id="btnUnfold">展开为平面图</button>
+        <button class="btn" id="btnFold">折叠回立体</button>
+        <button class="btn danger" id="btnDel">删除</button>
+        <button class="btn" id="btnDup">复制</button>
+      </div>
+      <p class="tip">按住 Shift 点选可多选，再点「粘合成组」。</p>
+    </section>
+
+    <section id="nonePanel">
+      <h2>选中</h2>
+      <p class="tip">在场景里点一个物体；拖动可平移，拖动空白处旋转视角。</p>
+    </section>
+
+    <section>
+      <h2>视图</h2>
+      <div class="grid2">
+        <button class="btn" id="btnView">当前视角生成视图</button>
+        <button class="btn" id="btnViewQ">清除视图</button>
+        <button class="btn" id="btnViewF">正视（沿 Z 看）</button>
+        <button class="btn" id="btnViewT">俯视（沿 Y 看）</button>
+        <button class="btn" id="btnViewS">侧视（沿 X 看）</button>
+        <button class="btn" id="btnVxL">绕 X 转 -15°</button>
+        <button class="btn" id="btnVxR">绕 X 转 +15°</button>
+        <button class="btn" id="btnVzL">绕 Z 转 -15°</button>
+        <button class="btn" id="btnVzR">绕 Z 转 +15°</button>
+      </div>
+    </section>
+  </aside>
+
+  <main id="stage">
+    <canvas id="view"></canvas>
+    <div id="topbar">
+      <span id="stat">0 个物体</span>
+      <button class="mini" id="btnShot">截图</button>
+      <button class="mini" id="btnHome">复位视角</button>
+    </div>
+    <div id="hud">左键拖动物体 ｜ 拖空白旋转 ｜ 滚轮缩放 ｜ 右键平移 ｜ 方向键移动 ｜ Q/E 旋转 ｜ Delete 删除</div>
+  </main>
+
+  <aside id="right">
+    <section>
+      <h2>物理量（默认值）</h2>
+      <div class="row"><label>质量 m (kg)</label><input id="mass" type="range" min="0.1" max="20" step="0.1" value="1"><span class="val" id="massv">1.0</span></div>
+      <div class="row"><label>重力 g (m/s²)</label><input id="grav" type="range" min="0" max="20" step="0.1" value="9.8"><span class="val" id="gravv">9.8</span></div>
+      <div class="row"><label>弹性 e</label><input id="rest" type="range" min="0" max="1" step="0.01" value="0.4"><span class="val" id="restv">0.40</span></div>
+      <div class="row"><label>摩擦 μ</label><input id="fric" type="range" min="0" max="1" step="0.01" value="0.3"><span class="val" id="fricv">0.30</span></div>
+      <div class="row"><label>初速 vx (m/s)</label><input id="v0x" type="range" min="-6" max="6" step="0.1" value="0"><span class="val" id="v0xv">0.0</span></div>
+      <div class="row"><label>初速 vz (m/s)</label><input id="v0z" type="range" min="-6" max="6" step="0.1" value="0"><span class="val" id="v0zv">0.0</span></div>
+      <p class="calc" id="gforce">G = mg = 9.80 N</p>
+      <p class="tip">m / e / μ / 初速 作用于选中物体；g 为全局。</p>
+    </section>
+
+    <section>
+      <h2>物理模拟</h2>
+      <div class="grid2">
+        <button class="btn primary" id="btnPlay">启用模拟</button>
+        <button class="btn" id="btnPause">暂停</button>
+        <button class="btn" id="btnReset">重置</button>
+        <button class="btn" id="btnClear">清空</button>
+      </div>
+      <p class="calc" id="simInfo">未运行</p>
+    </section>
+
+    <section>
+      <h2>课堂预设</h2>
+      <div class="grid2">
+        <button class="btn" id="btnP1">自由落体</button>
+        <button class="btn" id="btnP2">两球对撞</button>
+        <button class="btn" id="btnP3">三体堆叠</button>
+        <button class="btn" id="btnP4">展开演示</button>
+      </div>
+    </section>
+  </aside>
+</div>
+<div id="toast"></div>
+<script src="lib/three.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

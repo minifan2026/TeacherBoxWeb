@@ -1,0 +1,9 @@
+{
+  "name": "3D 课堂演示",
+  "version": "1.1",
+  "description": "搭几何体、粘合成组、展开成平面展开图、按视角生成投影视图、设置物理量后跑物理模拟",
+  "actions": [
+    { "label": "打开演示", "command": "cmd /c open.bat" }
+  ],
+  "help": "help.md"
+}

@@ -1,0 +1,79 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; }
+body {
+  font: 14px/1.5 "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  color: #1b2430;
+  background: #eef2f7;
+  user-select: none;
+}
+#app { display: grid; grid-template-columns: 248px 1fr 268px; height: 100vh; }
+
+#left, #right {
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  padding: 12px;
+  overflow-y: auto;
+}
+#right { border-right: 0; border-left: 1px solid #e2e8f0; }
+
+h1 { font-size: 16px; margin: 2px 0 12px; letter-spacing: .5px; }
+h2 { font-size: 13px; margin: 14px 0 8px; color: #5a6b80; font-weight: 600; }
+
+section { padding-bottom: 6px; border-bottom: 1px dashed #e8edf4; }
+section:last-child { border-bottom: 0; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.btn {
+  height: 34px;
+  border: 1px solid #d5dde8;
+  border-radius: 8px;
+  background: #f7f9fc;
+  color: #24303f;
+  font: inherit;
+  cursor: pointer;
+}
+.btn:hover { background: #eef3fa; border-color: #b9c7d8; }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: #2f6df6; border-color: #2f6df6; color: #fff; }
+.btn.primary:hover { background: #2560e0; }
+.btn.danger { color: #b4243a; border-color: #f0c3ca; background: #fff5f6; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.row { display: flex; align-items: center; gap: 6px; margin: 5px 0; }
+.row label { width: 92px; color: #47566b; font-size: 12px; flex: none; }
+.row input[type=range] { flex: 1; min-width: 0; accent-color: #2f6df6; }
+.val { width: 42px; text-align: right; font-variant-numeric: tabular-nums; color: #24303f; font-size: 12px; }
+
+.calc { margin: 8px 0 2px; padding: 6px 8px; background: #f2f6fc; border-radius: 8px; color: #1b4d99; font-size: 13px; }
+.tip { margin: 8px 0 0; color: #8294ab; font-size: 12px; line-height: 1.5; }
+.hidden { display: none !important; }
+
+#stage { position: relative; overflow: hidden; }
+#view { display: block; width: 100%; height: 100%; }
+
+#topbar {
+  position: absolute; top: 10px; right: 12px;
+  display: flex; gap: 6px; align-items: center;
+}
+#stat {
+  background: rgba(255,255,255,.82); border: 1px solid #dfe6ef; border-radius: 8px;
+  padding: 4px 10px; font-size: 12px; color: #47566b;
+}
+.mini {
+  height: 28px; padding: 0 10px; border-radius: 8px;
+  border: 1px solid #dfe6ef; background: rgba(255,255,255,.9);
+  font: inherit; font-size: 12px; color: #24303f; cursor: pointer;
+}
+.mini:hover { background: #fff; border-color: #b9c7d8; }
+
+#hud {
+  position: absolute; left: 12px; bottom: 10px; right: 12px;
+  color: #7c8ea6; font-size: 12px; pointer-events: none;
+}
+#toast {
+  position: fixed; left: 50%; bottom: 46px; transform: translateX(-50%);
+  background: #1b2430; color: #fff; padding: 8px 16px; border-radius: 10px;
+  font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+#toast.show { opacity: 1; }
