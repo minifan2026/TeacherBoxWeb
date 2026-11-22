@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeacherBox 工具市场</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main class="page">
+  <header class="head">
+    <h1>TeacherBox 工具市场</h1>
+    <p class="sub"><a href="https://github.com/minifan2026/TeacherBox">TeacherBox</a> · 一次只取 50 条，看完再取下一页</p>
+  </header>
+
+  <div class="bar">
+    <input id="q" type="search" placeholder="搜索名称 / 作者" autocomplete="off">
+    <a class="btn" id="submit" href="https://github.com/minifan2026/TeacherBoxWeb/issues/new?labels=tool-submission">提交工具</a>
+  </div>
+
+  <ul id="list" class="list"></ul>
+  <div id="empty" class="empty hidden">还没有工具。第一个可以是你写的。</div>
+
+  <div class="more">
+    <button id="more" class="btn hidden">加载更多</button>
+    <span id="stat" class="stat"></span>
+  </div>
+
+  <div id="err" class="err hidden"></div>
+</main>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "updated": "2026-11-22",
+  "pageSize": 50,
+  "items": [
+    {
+      "id": "7zip",
+      "name": "7-Zip",
+      "version": "26.06",
+      "author": "minifan2026",
+      "dev": false,
+      "desc": "解压压缩包，右键就能用",
+      "file": "tools/7zip.zip"
+    },
+    {
+      "id": "everything",
+      "name": "Everything",
+      "version": "1.4.1",
+      "author": "minifan2026",
+      "dev": false,
+      "desc": "秒搜本机文件",
+      "file": "tools/everything.zip"
+    },
+    {
+      "id": "sumatra",
+      "name": "SumatraPDF 阅读器",
+      "version": "3.6",
+      "author": "minifan2026",
+      "dev": false,
+      "desc": "轻量 PDF 阅读器，翻页快",
+      "file": "tools/sumatra.zip"
+    },
+    {
+      "id": "vscode",
+      "name": "VS Code",
+      "version": "1.146.0",
+      "author": "minifan2026",
+      "dev": false,
+      "desc": "写代码、改脚本",
+      "file": "tools/vscode.zip"
+    }
+  ]
+}
