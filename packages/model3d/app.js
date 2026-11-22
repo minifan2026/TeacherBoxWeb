@@ -650,6 +650,7 @@
     group.quaternion.setFromRotationMatrix(m);
     // 摆在物体旁边（屏幕右侧），正对镜头，别糊在物体脸上
     // 固定在画面左上方（物体同深度），永远在视野里，不遮物体
+    camera.updateMatrixWorld(true);   // 保证 unproject 用的是当前机位
     var dist = camera.position.distanceTo(pj.C);
     var aim = new T.Vector3(-0.46, 0.40, 0.5).unproject(camera);
     group.position.copy(camera.position).addScaledVector(
