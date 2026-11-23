@@ -1,8 +1,18 @@
 {
   "offset": 0,
   "limit": 50,
-  "total": 5,
+  "total": 6,
   "items": [
+    {
+      "id": "score",
+      "name": "班级分数",
+      "version": "1.0",
+      "author": "minifan2026",
+      "dev": false,
+      "size": 16761,
+      "file": "tools/score.zip",
+      "desc": "密码登录后给全班加减分，兑换不透支，荣誉榜不被兑换影响，数据在本机加密保存"
+    },
     {
       "id": "model3d",
       "name": "3D 课堂演示",

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>班级分数</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 登录 -->
+<div id="gate" class="gate">
+  <div class="gate-card">
+    <h1>班级分数</h1>
+    <p class="gate-sub">输入密码进入。成绩只在本机加密保存，不上传。</p>
+    <input id="pw" type="password" class="pw" placeholder="密码" autocomplete="off">
+    <div class="gate-actions">
+      <button class="btn primary" id="btnEnter">进入</button>
+      <button class="btn" id="btnShowDefault">查看默认密码</button>
+    </div>
+    <div id="gateHint" class="gate-hint"></div>
+  </div>
+</div>
+
+<!-- 首次录入名单 -->
+<div id="setup" class="hidden">
+  <div class="setup-card">
+    <h1>录入名单</h1>
+    <p class="gate-sub">每行一个人。选「学号 名称」会按学号升序排好再录入；选「只有名称」按名称升序。</p>
+    <div class="seg" id="modeSeg">
+      <button class="seg-btn on" data-mode="id">学号 名称</button>
+      <button class="seg-btn" data-mode="name">只有名称</button>
+    </div>
+    <textarea id="rosterText" spellcheck="false" placeholder="例如：&#10;03 张三&#10;01 李四&#10;12 王五"></textarea>
+    <div class="setup-foot">
+      <span id="rosterInfo" class="hint">0 人</span>
+      <button class="btn primary" id="btnMakeRoster">建立名单</button>
+    </div>
+  </div>
+</div>
+
+<!-- 主界面 -->
+<div id="main" class="hidden">
+  <header class="bar">
+    <div class="bar-left">
+      <span class="brand">班级分数</span>
+      <span id="stat" class="stat">0 人</span>
+    </div>
+    <div class="bar-right">
+      <label class="switch" title="分数高的排到最前面">
+        <input type="checkbox" id="chkDynamic">
+        <span>动态排序</span>
+      </label>
+      <button class="btn" id="btnHonor">荣誉榜</button>
+      <button class="btn" id="btnRedeem">兑换</button>
+      <button class="btn" id="btnExport">导出 CSV</button>
+      <button class="btn" id="btnSettings">设置</button>
+      <button class="btn ghost" id="btnLock">锁定</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <input id="filter" class="filter" placeholder="搜名字或学号">
+    <span id="sumInfo" class="hint"></span>
+  </div>
+
+  <div class="batch hidden" id="batchBar">
+    <span id="batchInfo">已选 0 人</span>
+    <input id="batchVal" type="number" class="num" value="1" step="0.5">
+    <input id="batchReason" class="reason" placeholder="原因（可空，如 课堂发言）">
+    <button class="btn primary" id="btnBatchAdd">加分</button>
+    <button class="btn danger" id="btnBatchSub">减分</button>
+    <button class="btn ghost" id="btnBatchClear">取消选择</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="grid">
+      <thead>
+        <tr>
+          <th class="c-chk"><input type="checkbox" id="chkAll" title="全选"></th>
+          <th class="c-rank">名次</th>
+          <th class="c-name">姓名</th>
+          <th class="c-id">学号</th>
+          <th class="c-num">荣誉分</th>
+          <th class="c-num">已兑换</th>
+          <th class="c-num">余额</th>
+          <th class="c-ops">操作</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <p class="foot">荣誉分 = 加分/减分累计（荣誉榜、倒数都按它算）；余额 = 荣誉分 − 已兑换，兑换不能让余额变负。</p>
+</div>
+
+<!-- 通用弹窗 -->
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="modalTitle">标题</h2>
+      <button class="x" id="modalClose">×</button>
+    </div>
+    <div id="modalBody" class="modal-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<pre id="selftest"></pre>
+
+<script src="app.js"></script>
+</body>
+</html>
