@@ -12,6 +12,15 @@
       "file": "tools/score.zip"
     },
     {
+      "id": "clean",
+      "name": "C 盘清理",
+      "version": "1.1",
+      "author": "minifan2026",
+      "dev": false,
+      "desc": "扫描/清理临时文件、更新缓存、回收站；定时可自定义每周几、几点",
+      "file": "tools/clean.zip"
+    },
+    {
       "id": "model3d",
       "name": "3D 课堂演示",
       "version": "1.1",

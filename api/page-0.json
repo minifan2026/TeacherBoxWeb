@@ -1,7 +1,7 @@
 {
   "offset": 0,
   "limit": 50,
-  "total": 6,
+  "total": 7,
   "items": [
     {
       "id": "score",
@@ -12,6 +12,16 @@
       "size": 17332,
       "file": "tools/score.zip",
       "desc": "密码登录后给全班加减分，兑换不透支，荣誉榜不被兑换影响，数据在本机加密保存"
+    },
+    {
+      "id": "clean",
+      "name": "C 盘清理",
+      "version": "1.1",
+      "author": "minifan2026",
+      "dev": false,
+      "size": 6699,
+      "file": "tools/clean.zip",
+      "desc": "扫描/清理临时文件、更新缓存、回收站；定时可自定义每周几、几点"
     },
     {
       "id": "model3d",
