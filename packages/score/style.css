@@ -227,6 +227,11 @@ td.c-rank { color: var(--mute); font-family: var(--mono, monospace); }
 .spent { color: var(--amber); }
 .bal { font-weight: 600; }
 .bal.low { color: var(--amber); }
+.bal.neg { color: #c0392b; }
+
+/* 兑换被拒等明确提示 */
+.alert-main { font-size: 15px; font-weight: 600; margin: 2px 0 8px; color: #8a2a20; }
+.alert-sub { font-size: 13px; line-height: 1.75; color: var(--mute); margin: 0; }
 
 .mini {
   padding: 3px 8px;

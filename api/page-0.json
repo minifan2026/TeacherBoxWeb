@@ -6,10 +6,10 @@
     {
       "id": "score",
       "name": "班级分数",
-      "version": "1.0",
+      "version": "1.1",
       "author": "minifan2026",
       "dev": false,
-      "size": 16761,
+      "size": 17332,
       "file": "tools/score.zip",
       "desc": "密码登录后给全班加减分，兑换不透支，荣誉榜不被兑换影响，数据在本机加密保存"
     },

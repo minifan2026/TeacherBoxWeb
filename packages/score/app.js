@@ -155,11 +155,10 @@
     if (data.log.length > 500) data.log.length = 500;
   }
 
-  // 加分 / 减分：不允许把余额减成负数
+  // 加分 / 减分：只记荣誉分，减分不设下限（可以扣成负数），兑换另有约束
   function applyAdj(data, stu, delta, reason) {
     delta = round1(Number(delta));
     if (!isFinite(delta) || delta === 0) return 'zero';
-    if (delta < 0 && balanceOf(stu) + delta < 0) return 'negative';
     stu.pts = round1(stu.pts + delta);
     pushLog(data, delta > 0 ? 'add' : 'sub', stu, delta, reason);
     return '';
@@ -274,7 +273,8 @@
       tr.appendChild(spent);
 
       var bal = document.createElement('td');
-      bal.className = 'c-num bal' + (balanceOf(s) < 3 ? ' low' : '');
+      var bv = balanceOf(s);
+      bal.className = 'c-num bal' + (bv < 0 ? ' neg' : (bv < 3 ? ' low' : ''));
       bal.textContent = String(balanceOf(s));
       tr.appendChild(bal);
 
@@ -329,7 +329,7 @@
 
   function quickAdj(stu, delta) {
     var r = applyAdj(state.data, stu, delta, delta > 0 ? '快速加分' : '快速减分');
-    if (r === 'negative') return toast('不能减成负分：' + stu.name + ' 余额 ' + balanceOf(stu));
+    if (r === 'zero') return;
     save(); render();
   }
 
@@ -342,6 +342,24 @@
     $('modal').classList.remove('hidden');
   }
   function closeModal() { $('modal').classList.add('hidden'); }
+
+  // 需要老师看清的提示：独立弹窗，而不是一闪而过的 toast
+  function alertModal(title, lines, after) {
+    openModal(title, function (body) {
+      lines.forEach(function (t, i) {
+        var p = document.createElement('p');
+        p.className = i === 0 ? 'alert-main' : 'alert-sub';
+        p.textContent = t;
+        body.appendChild(p);
+      });
+      body.appendChild(actionsEl([{
+        label: '知道了', cls: 'primary', fn: function () {
+          closeModal();
+          if (after) after();
+        }
+      }]));
+    });
+  }
 
   function field(labelText, input) {
     var f = document.createElement('div');
@@ -388,7 +406,7 @@
             var d = round1(parseFloat(val.value));
             if (!isFinite(d) || d === 0) return toast('分值要填一个非 0 的数');
             var r = applyAdj(state.data, stu, d, reason.value.trim());
-            if (r === 'negative') return toast('减分不能把余额减成负数（当前余额 ' + balanceOf(stu) + '）');
+            if (r === 'zero') return toast('分值要填一个非 0 的数');
             save(); render(); closeModal();
             toast((d > 0 ? '加分 ' : '减分 ') + Math.abs(d) + '：' + stu.name + ' → ' + balanceOf(stu));
           }
@@ -397,7 +415,7 @@
     });
   }
 
-  function openRedeem(preset) {
+  function openRedeem(preset, preAmount, preItem) {
     var sel = document.createElement('select');
     state.data.students.forEach(function (s, i) {
       var o = document.createElement('option');
@@ -408,10 +426,10 @@
     if (preset) {
       state.data.students.forEach(function (s, i) { if (s === preset) sel.value = String(i); });
     }
-    var amount = inputEl('number', 3, '要扣的分');
+    var amount = inputEl('number', preAmount != null && preAmount !== '' ? preAmount : 3, '要扣的分');
     amount.step = '0.5';
     amount.min = '0.5';
-    var item = inputEl('text', '', '兑换什么（如 小奖品 / 一次免作业）');
+    var item = inputEl('text', preItem || '', '兑换什么（如 小奖品 / 一次免作业）');
     var info = document.createElement('p');
     info.className = 'hint';
     function refresh() {
@@ -432,9 +450,19 @@
           label: '兑换', cls: 'primary', fn: function () {
             var s = state.data.students[parseInt(sel.value, 10)];
             var a = round1(parseFloat(amount.value));
-            var r = tryRedeem(state.data, s, a, item.value.trim());
+            var it = item.value.trim();
+            var r = tryRedeem(state.data, s, a, it);
             if (r === 'amount') return toast('扣分要填大于 0 的数');
-            if (r === 'balance') return toast('余额不够：' + s.name + ' 只有 ' + balanceOf(s) + ' 分，不能透支');
+            if (r === 'balance') {
+              closeModal();
+              alertModal('不能兑换：余额不够', [
+                s.name + ' 现在只有 ' + balanceOf(s) + ' 分，这次要扣 ' + (isFinite(a) ? a : '—') + ' 分。',
+                '兑换只能扣已经挣到的分，不能扣成负数。想多扣，先给 TA 加分；减分已经把分扣成负数的话，也没法用兑换抵。'
+              ], function () {
+                openRedeem(s, String(amount.value), it);
+              });
+              return;
+            }
             save(); render(); closeModal();
             toast('已兑换：' + s.name + ' 扣 ' + a + '，余额 ' + balanceOf(s));
           }
@@ -767,15 +795,12 @@
       if (state.selected[s._key]) picked.push(s);
     });
     if (!picked.length) return toast('先勾选同学');
-    var blocked = [];
     picked.forEach(function (s) {
-      var r = applyAdj(state.data, s, sign * v, reason);
-      if (r === 'negative') blocked.push(s.name);
+      applyAdj(state.data, s, sign * v, reason);
     });
     state.selected = {};
     save(); render();
-    toast('已' + (sign > 0 ? '加分' : '减分') + ' ' + v + ' 给 ' + (picked.length - blocked.length) + ' 人' +
-      (blocked.length ? '；' + blocked.length + ' 人余额不够没减' : ''));
+    toast('已' + (sign > 0 ? '加分' : '减分') + ' ' + v + ' 给 ' + picked.length + ' 人');
   }
 
   $('btnHonor').addEventListener('click', openHonor);
@@ -804,9 +829,9 @@
       var data = { students: r1, log: [], settings: {} };
       var a = data.students[0], b = data.students[1];
       ok('加分累加', applyAdj(data, a, 5, '课堂') === '' && a.pts === 5, 'pts=' + a.pts);
-      ok('减分不允许负余额', applyAdj(data, b, -2, '') === 'negative' && b.pts === 0, 'pts=' + b.pts);
-      ok('先加分再减到 0 可以', applyAdj(data, b, 2, '') === '' && applyAdj(data, b, -2, '') === '' && b.pts === 0,
-        'pts=' + b.pts);
+      ok('减分可以扣成负分', applyAdj(data, b, -2, '') === '' && b.pts === -2, 'pts=' + b.pts);
+      applyAdj(data, b, 2, '');
+      ok('负分能加回 0', b.pts === 0, 'pts=' + b.pts);
 
       ok('兑换余额不足被拒', tryRedeem(data, b, 1, '糖') === 'balance', 'bal=' + balanceOf(b));
       applyAdj(data, a, 0.5, '');
