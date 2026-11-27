@@ -1,6 +1,6 @@
 {
   "name": "班级分数",
-  "version": "1.1",
+  "version": "1.2",
   "description": "弹窗登录、名单录入、加减分、兑换扣分、荣誉榜，数据用密码派生的密钥在本机加密保存",
   "actions": [
     { "label": "打开分数册", "command": "cmd /c open.bat" }

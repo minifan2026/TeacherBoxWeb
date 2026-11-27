@@ -1,11 +1,11 @@
 {
-  "updated": "2026-11-23",
+  "updated": "2026-11-27",
   "pageSize": 50,
   "items": [
     {
       "id": "score",
       "name": "班级分数",
-      "version": "1.1",
+      "version": "1.2",
       "author": "minifan2026",
       "dev": false,
       "desc": "密码登录后给全班加减分，兑换不透支，荣誉榜不被兑换影响，数据在本机加密保存",

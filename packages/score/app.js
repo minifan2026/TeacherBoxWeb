@@ -2,7 +2,8 @@
 (function () {
   'use strict';
 
-  var DEF_PW = 'IntMax2026';          // 默认密码（IntMax 加年份后缀，改密码后作废）
+  var DEF_PW = '2147483647';          // 默认密码：IntMax 的值（改密码后作废）
+  var LEGACY_PW = 'IntMax2026';       // 1.1 版的默认密码：老数据用它加密，只用来自动迁移
   var K_VAULT = 'tbscore.vault.v1';
   var K_META = 'tbscore.meta.v1';
   var ITER = 120000;
@@ -702,12 +703,23 @@
     }
     hint.textContent = '正在解锁…';
     unsealData(blob, pw).then(function (data) {
-      if (!data) {
-        var meta = getJSON(K_META);
+      if (data) { enterMain(data, pw); return; }
+      var meta = getJSON(K_META);
+      // 新默认密码打不开时，再试 1.1 的老默认密码：老数据是 IntMax2026 加密的
+      if (pw !== DEF_PW || (meta && meta.changed)) {
         hint.innerHTML = '密码不对' + (meta && meta.changed ? '（你改过密码，默认密码已失效）' : '（默认密码见按钮）');
         return;
       }
-      enterMain(data, pw);
+      unsealData(blob, LEGACY_PW).then(function (old) {
+        if (!old) {
+          hint.innerHTML = '密码不对（默认密码见按钮）';
+          return;
+        }
+        enterMain(old, DEF_PW);
+        saveNow();
+        hint.textContent = '';
+        toast('老数据已按新默认密码重新加密，以后用 ' + DEF_PW + ' 打开');
+      });
     });
   }
 
@@ -732,7 +744,7 @@
     } else if (meta && meta.changed) {
       h.innerHTML = '默认密码是 <b>' + DEF_PW + '</b>，但你改过密码，它已经失效了——用你改的那个。';
     } else {
-      h.innerHTML = '默认密码：<b>' + DEF_PW + '</b>（没改过密码的话就是它）';
+      h.innerHTML = '默认密码：<b>' + DEF_PW + '</b>（没改过密码的话就是它；1.1 版的老数据输它也能自动迁移）';
     }
   });
 
@@ -857,11 +869,21 @@
         out.textContent = log.join('\n');
         return;
       }
-      sealData(payload, 'IntMax2026').then(function (blob) {
-        return unsealData(blob, 'IntMax2026').then(function (got) {
+      sealData(payload, '2147483647').then(function (blob) {
+        return unsealData(blob, '2147483647').then(function (got) {
           ok('加密后能用同一密码解开', !!got && got.hello === '班级分数', JSON.stringify(got));
           return unsealData(blob, 'wrong-pass').then(function (bad) {
             ok('错密码解不开', bad === null, String(bad));
+          });
+        });
+      }).then(function () {
+        // 默认密码：新值 2147483647；1.1 老的 IntMax2026 能解老数据
+        return sealData(payload, LEGACY_PW).then(function (oldBlob) {
+          return unsealData(oldBlob, DEF_PW).then(function (bad) {
+            ok('新默认密码解不开 1.1 的老数据（必须走迁移）', bad === null, String(bad));
+            return unsealData(oldBlob, LEGACY_PW).then(function (got) {
+              ok('老数据用老默认密码能解开', !!got && got.hello === '班级分数', JSON.stringify(got));
+            });
           });
         });
       }).then(function () {
